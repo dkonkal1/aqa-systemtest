@@ -66,7 +66,7 @@ limitations under the License.
 	
 	<condition property="isBelowJava12" value="true">
 		<or>
-			<isset property="isJava7"/>
+			<isset property="isJavas7"/>
 			<isset property="isJavas8"/>
 			<isset property="isJavas11"/>
 		</or>
@@ -89,7 +89,7 @@ limitations under the License.
 	<target name="build-archives" depends="build-jars">
 	</target>
 
-	<target name="build-jars" depends="build-java, create-bin-dir, build-jdi-jar, build-hcr-jar">
+	<target name="build-jars" depends="build-java, create-bin-dir, build-jdi-jar">
 	</target>
 	
 	<target name="build-jdi-jar" depends="build-java, create-bin-dir">
@@ -113,7 +113,21 @@ limitations under the License.
 		</jar>
 	</target>
 
-	<target name="build-java" depends="build-java-8, build-java-11, build-java-above-11" />
+	<target name="build-java" depends="build-java-7" if="${isJavas7}" />
+
+        <target name="build-java-7" if="${isJavas7}" depends="check-prereqs, create-bin-dir">
+              <javac srcdir="${openjdk_test_debugging_src_dir}"
+                     destdir="${openjdk_test_debugging_bin_dir}"
+                     fork="true"
+                     executable="${java_compiler}"
+                     debug="true"
+                     classpathref="project.class.path"
+                     encoding="${src-encoding}"
+                     includeantruntime="false"
+                     failonerror="true">
+                     <src path="${openjdk_test_debugging_src_dir}" />
+              </javac>
+        </target>
 		
 	<target name="build-java-8" if="${isJavas8}" depends="check-prereqs, create-bin-dir">
 		 <!--
